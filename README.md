@@ -67,14 +67,14 @@ shape that we want : **the ground**.
 
 ![Process_filt (2)](https://user-images.githubusercontent.com/73825898/228518049-0c88b516-2f0d-4ade-af2f-5bf1796d5001.png)
 
-1 : We’ll use the last point cloud generated to compute it and add some processing filters to get all of
+- 1 : We’ll use the last point cloud generated to compute it and add some processing filters to get all of
 that we need. For that, we’ll take as an input, the Pass-through point cloud to put on it the Statistical
 Outlier Removal filter. Statistical Outlier Removal works by identifying and removing points that
 are significantly different from the surrounding points in the cloud. These points are referred to
 as outliers and can result from measurement errors or other sources of noise. The threshold can be
 adjusted to provide a desired level of filtering. This filter is important for the following steps because
 by adjusting the quality of the point cloud, the computing will be more accurate with the next filters.
-2 : The next one who will interested us is the Project inliner. The Project Inlier filter is a tool used to
+- 2 : The next one who will interested us is the Project inliner. The Project Inlier filter is a tool used to
 identify and extract points that belong to a specific plane in the scene. The filter works by projecting
 the points onto a specified plane and then selecting only the points that are within a certain threshold
 distance from the plane. The selected points are considered inliers and are retained in the output
@@ -82,7 +82,7 @@ point cloud. By using this filter, and in our case, we can extract the ground wi
 objects on it. This is very important for the final step of the processing on the point cloud, because
 we have a plane surface, and so we have the possibility to get the edges and improve the general
 quality.
-3 : Finally, to improve quality of the last point cloud, and so get a complete surface an normalize it,
+- 3 : Finally, to improve quality of the last point cloud, and so get a complete surface an normalize it,
 We’ll use the Convex Hull filter. The Convex Hull filter is a useful tool for extracting information
 about the shape and boundaries of objects in a point cloud. By identifying the convex hull of an
 object, the filter can provide a simplified representation of the object that is easier to work with,
@@ -90,6 +90,9 @@ while still retaining the important information about the object’s shape and s
 the Voxel grid to get a simpler point cloud, and have a good representation of the edges by using
 convex hull filter, we can extract from the last point cloud, a ground surface from the starting point
 cloud.
+
+
+# Conclusion
 In conclusion, PCL (Point Cloud Library) is a powerful tool for obtaining a plane surface to work
 on in computer vision and robotics applications. PCL offers various algorithms for processing 3D
 point clouds and detecting plane surfaces. The resulting plane surface can be used for a variety of
