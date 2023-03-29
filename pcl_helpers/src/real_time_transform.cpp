@@ -1,0 +1,90 @@
+﻿#include <ros/ros.h>
+// PCL specific includes
+#include <sensor_msgs/PointCloud2.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/PCLPointCloud2.h>
+#include <pcl/conversions.h>
+#include <pcl_ros/transforms.h>
+
+#include <iostream>
+
+#include <pcl/point_cloud.h>
+#include <pcl/console/parse.h>
+#include <pcl/common/transforms.h>
+#include <pcl/visualization/pcl_visualizer.h>
+
+ros::Publisher pub;
+
+void cloud_cb (const boost::shared_ptr<const sensor_msgs::PointCloud2>& cloud_msg)
+{
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Container for original & filtered data
+  pcl::PCLPointCloud2 cloud; // = new pcl::PCLPointCloud2; 
+  //pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
+  //pcl::PCLPointCloud2 cloud_filtered;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz (new pcl::PointCloud<pcl::PointXYZ> );
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ> ());
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Convert to PCL data type
+  pcl_conversions::toPCL(*cloud_msg, cloud);  //first from sensor msgs pointcloud2 to pcl pointcloud2
+  pcl::fromPCLPointCloud2(cloud,*cloud_xyz);  //from pcl pointcloud2 to pcl pointxyz in order to make to computations below
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /*  METHOD #2: Using a Affine3f
+    The computations in order to rotate the pointcloud are done on pcl::pointxyz data type
+  */
+  float theta = 1.5708;//M_PI/4;
+  Eigen::Affine3f transform_2 = Eigen::Affine3f::Identity();
+
+  // Define a translation of 5.5 meters on the x axis.
+  transform_2.translation() << 0.0, 0.0, 0.0;
+
+  // The same rotation matrix as before; theta radians arround Z axis
+  transform_2.rotate (Eigen::AngleAxisf (-theta, Eigen::Vector3f::UnitZ()));
+  transform_2.rotate (Eigen::AngleAxisf (-theta, Eigen::Vector3f::UnitX()));
+  //transform_2.rotate (Eigen::AngleAxisf (theta/2, Eigen::Vector3f::UnitZ()));
+
+  // Print the transformation
+  //printf ("\nMethod #2: using an Affine3f\n");
+  //std::cout << transform_2.matrix() << std::endl;
+
+  //// Executing the transformation with the theta angle to the pointcloud
+  pcl::transformPointCloud (*cloud_xyz, *cloud_filtered, transform_2);
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //// Convert to ROS data type
+  sensor_msgs::PointCloud2 output;		//create a new sensor_msgs pointcloud2 message in order to keep track of it in Rviz 
+  pcl::PCLPointCloud2 cloud_return;		//create a pcl pointcloud2
+  pcl::toPCLPointCloud2(*cloud_filtered, cloud_return);		//transform from pcl pointxyz to pcl pointcloud2
+  pcl_conversions::fromPCL(cloud_return, output);			//transform form pcl pointcloud2 to sensor_msgs pointcloud2
+
+  // Publish the data
+  pub.publish (output);
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+int main (int argc, char** argv)
+{
+  // Initialize ROS
+  ros::init (argc, argv, "real_time_transform");
+  ros::NodeHandle nh;
+
+  // Create a ROS subscriber for the input point cloud
+  ros::Subscriber sub = nh.subscribe ("/camera/points", 1, cloud_cb);//pf_out
+
+  // Create a ROS publisher for the output point cloud
+  pub = nh.advertise<sensor_msgs::PointCloud2> ("/filtered_cloud", 1);
+
+  // Spin
+  ros::spin ();
+}
+

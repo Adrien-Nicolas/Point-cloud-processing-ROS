@@ -1,0 +1,44 @@
+<launch>
+  <node pkg="pcl_helpers" type="voxel_filter_node" name="voxel_filter_node" output="screen" >
+    <remap from="point_cloud_in" to="/zed/zed_node/point_cloud/cloud_registered" />
+  </node>
+
+  <node pkg="pcl_helpers" type="passthrough_filter_node" name="passthrough_filter_node" output="screen" >
+    <remap from="point_cloud_in" to="/VOXEL_OUT" />
+  </node>
+
+  <node pkg="pcl_helpers" type="statistical_removal" name="statistical_removal" output="screen" >
+    <remap from="point_cloud_in" to="/PASS_OUT" />
+  </node> 
+
+  <node pkg="pcl_helpers" type="plane_model_segmentation" name="plane_model_segmentation" output="screen" >
+    <remap from="point_cloud_in" to="/STAT_OUT" />
+  </node>
+
+  <node pkg="pcl_helpers" type="project_inliner" name="project_inliner" output="screen" >
+    <remap from="point_cloud_in" to="/SEGM_OUT" />
+  </node>
+
+  <node pkg="pcl_helpers" type="edges_detec" name="edges_detec" output="screen" >
+    <remap from="point_cloud_in" to="/INLINE_OUT" />
+   </node> 
+
+  <!-- <node pkg="pcl_helpers" type="cloud_difference" name="cloud_difference" output="screen" >
+    <remap from="point_cloud_in" to="/sor_out" />
+  </node> -->
+
+<node pkg="pcl_helpers" type="real_time_transform" name="real_time_transform" output="screen" /> 
+
+ <!-- <node pkg="pcl_tutorial" type="plane_segmentation_node" name="plane_segmentation_node" output="screen" >
+  <remap from="point_cloud_in" to="/pf_out" />
+ </node> -->
+
+ <!-- <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find pcl_tutorial)/cfg/rviz.rviz"/> -->
+
+ <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure" output="screen" />
+
+ <!--<node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" output="screen" args=" $(find pcl_tutorial)/data/test.pcd 1" />-->
+ <!--<node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" output="screen" args=" /home/cosch/Desktop/test/box/1.pcd 1" />-->
+
+
+</launch>
