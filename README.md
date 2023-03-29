@@ -44,19 +44,19 @@ You can change all of the parameters related to rqt_reconfigure for the PCL filt
 
 ![RAW_VOXEL_PASS (1)](https://user-images.githubusercontent.com/73825898/228518018-eeb5d857-109a-45ba-b24a-515d3a1bda69.png)
 
-1 : The first point cloud is the raw point cloud coming from the ZED camera. As you can see, the
+- 1 : The first point cloud is the raw point cloud coming from the ZED camera. As you can see, the
 overall result is correct, but with residual light coming from a window, and with some bumps in the
 ground, the point cloud is biased, and some surfaces are not scanned as they should be. Finally the
 objective is to extract this ground which is not correctly represented, to extract from it a surface on
 which we could work correctly and to make it as uniform as possible.
-2 : On the second point cloud, we will applied the voxel filter. The voxel grid filter is a key tool in the
+- 2 : On the second point cloud, we will applied the voxel filter. The voxel grid filter is a key tool in the
 filtering of raw point clouds because it allows for the reduction of the number of points in the cloud
 while still preserving the overall shape of the objects in the scene. This is achieved by dividing the
 point cloud into small cubic cells, or voxels, and then representing each cell by a single point that is
 the mean of the points within that cell. By reducing the size of the point cloud, the voxel grid filter
 allows for faster and more efficient processing, making it a valuable tool for robotic navigation and
 mapping.
-3 : Finally with the shaping of the raw point cloud, we’ll use pass through filter. The filter works by
+- 3 : Finally with the shaping of the raw point cloud, we’ll use pass through filter. The filter works by
 allowing points in a point cloud to "pass through" to the output cloud if they meet certain criteria,
 and discarding points that do not meet these criteria. This can be useful for removing points that are
 outside of a certain range or for selecting points along a specific axis. For our case, We juste need
